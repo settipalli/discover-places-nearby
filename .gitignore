@@ -29,9 +29,13 @@ pip-log.txt
 build
 
 # User-specific stuff:
+.idea/**/LocationBasedService.iml
+.idea/**/modules.xml
+.idea/**/vcs.xml
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+.idea/**/inspectionProfiles/
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
