@@ -36,6 +36,7 @@ build
 .idea/**/tasks.xml
 .idea/dictionaries
 .idea/**/inspectionProfiles/
+.idea/**/misc.xml
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
