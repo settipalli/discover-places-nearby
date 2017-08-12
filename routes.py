@@ -25,12 +25,16 @@ def about():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    form = SignupForm()
+
     if request.method == "GET":
-        form = SignupForm()
         return render_template("signup.html", form=form)
 
     elif request.method == "POST":
-        return "Success!"
+        if form.validate() == False:
+            return render_template("signup.html", form=form)
+        else:
+            return "Success!"
 
 
 if __name__ == "__main__":
