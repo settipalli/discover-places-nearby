@@ -1,6 +1,8 @@
 # Will contain the applications main code.
 
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, abort
+from flask_login import current_user, LoginManager, login_required, login_user, logout_user
+
 from models import db, User
 from forms import SignupForm, LoginForm
 
@@ -11,6 +13,11 @@ db.init_app(app)
 
 # Prevent CSRF attack (form)
 app.secret_key = "development-key"
+
+# login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
 
 
 @app.route("/")
@@ -25,7 +32,7 @@ def about():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-    if "email" in session:
+    if current_user.is_authenticated:
         return redirect(url_for("home"))
 
     form = SignupForm()
@@ -41,21 +48,19 @@ def signup():
             db.session.add(user)
             db.session.commit()
 
-            session["email"] = user.email
+            login_user(user)
             return redirect(url_for("home"))
 
 
 @app.route("/home")
+@login_required
 def home():
-    if "email" not in session:
-        return redirect(url_for("login"))
-
     return render_template("home.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if "email" in session:
+    if current_user.is_authenticated:
         return redirect(url_for("home"))
 
     form = LoginForm()
@@ -70,9 +75,9 @@ def login():
             email = form.email.data
             password = form.password.data
 
-            user = User.query.filter_by(email = email).first()
+            user = User.query.filter_by(email=email).first()
             if user is not None and user.check_password(password):
-                session["email"] = user.email
+                login_user(user)
                 return redirect(url_for("home"))
             else:
                 form.email.errors.append("Invalid email or password")
@@ -80,9 +85,17 @@ def login():
 
 
 @app.route("/logout")
+@login_required
 def logout():
-    session.pop("email", None)
+    logout_user()
     return redirect(url_for("index"))
+
+
+# callback to reload the user object
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
