@@ -70,5 +70,10 @@ def login():
                 return render_template("login.html", form=form) # redirect to login url - which triggers a GET request from the browser
 
 
+@app.route("/logout")
+def logout():
+    session.pop("email", None)
+    return redirect(url_for("index"))
+
 if __name__ == "__main__":
     app.run(debug=True)
