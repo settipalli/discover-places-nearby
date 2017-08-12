@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, session, redirect, url_for
 from models import db, User
-from forms import SignupForm
+from forms import SignupForm, LoginForm
 
 app = Flask(__name__)
 
@@ -45,6 +45,30 @@ def signup():
 @app.route("/home")
 def home():
     return render_template("home.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+
+    if request.method == "GET":
+        return render_template("login.html", form=form)
+
+    elif request.method == "POST":
+        if form.validate() == False:
+            return render_template("login.html", form=form)
+        else:
+            email = form.email.data
+            password = form.password.data
+
+            user = User.query.filter_by(email = email).first()
+            if user is not None and user.check_password(password):
+                session["email"] = user.email
+                return redirect(url_for("home"))
+            else:
+                form.email.errors.append("Invalid email or password")
+                return render_template("login.html", form=form) # redirect to login url - which triggers a GET request from the browser
+
 
 if __name__ == "__main__":
     app.run(debug=True)
