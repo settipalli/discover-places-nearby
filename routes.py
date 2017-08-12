@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, a
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user
 
 from models import db, User
-from forms import SignupForm, LoginForm
+from forms import SignupForm, LoginForm, AddressForm
 
 app = Flask(__name__)
 
@@ -52,11 +52,20 @@ def signup():
             return redirect(url_for("home"))
 
 
-@app.route("/home")
+@app.route("/home", methods=["GET", "POST"])
 @login_required
 def home():
-    return render_template("home.html")
+    form = AddressForm()
 
+    if request.method == "GET":
+        return render_template("home.html", form=form)
+
+    elif request.method == "POST":
+        if form.validate() == False:
+            return render_template("home.html", form=form)
+        else:
+            address = form.address.data
+            return "You searched for %r" % address
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
