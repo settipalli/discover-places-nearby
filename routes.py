@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user
 
-from models import db, User
+from models import db, User, Place
 from forms import SignupForm, LoginForm, AddressForm
 
 app = Flask(__name__)
@@ -56,16 +56,26 @@ def signup():
 @login_required
 def home():
     form = AddressForm()
+    places = []
+    my_coordinates = (37.4221, -122.0844)
 
     if request.method == "GET":
-        return render_template("home.html", form=form)
+        return render_template("home.html", form=form, my_coordinates=my_coordinates, places=places)
 
     elif request.method == "POST":
         if form.validate() == False:
             return render_template("home.html", form=form)
         else:
+            # get the address
             address = form.address.data
-            return "You searched for %r" % address
+
+            # query for places around the address
+            p = Place()
+            my_coordinates = p.address_to_latlng(address)
+            places = p.query(address)
+
+            # return the results as a list
+            return render_template("home.html", form=form, my_coordinates=my_coordinates, places=places)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

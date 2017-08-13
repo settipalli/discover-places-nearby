@@ -37,4 +37,5 @@ The application's HTML files are stored in this folder.
     
 5. Create a heroku app: `heroku create <appname>`
 6. Push to heroku git repository: `git push heroku master`
-7. Verify the deployment: `heroku open`
+7. Set the `GOOGLE_API_KEY` environment variable to the API key generated for a project through `https://console.developers.google.com`.
+8. Verify the deployment: `heroku open`
