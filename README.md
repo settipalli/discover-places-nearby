@@ -3,20 +3,64 @@
 A location based service written in Python Flask that allows a user to discover nearby places of interest.
 
 # Project Structure
-
+    
+    ├── Procfile
     ├── README.md
+    ├── forms.py
+    ├── models.py
+    ├── requirements.txt
     ├── routes.py
     ├── static
     │   ├── README.md
     │   ├── css
-    │   ├── img
-    │   └── js
+    │   │   └── main.css
+    │   └── img
+    │       ├── README.md
+    │       ├── device.svg
+    │       ├── favicon.png
+    │       ├── favicon.svg
+    │       └── favicons
+    │           ├── android-chrome-192x192.png
+    │           ├── android-chrome-384x384.png
+    │           ├── apple-touch-icon.png
+    │           ├── browserconfig.xml
+    │           ├── favicon-16x16.png
+    │           ├── favicon-32x32.png
+    │           ├── favicon.ico
+    │           ├── manifest.json
+    │           ├── mstile-150x150.png
+    │           └── safari-pinned-tab.svg
     └── templates
-        └── README.md
+        ├── README.md
+        ├── about.html
+        ├── home.html
+        ├── index.html
+        ├── layout.html
+        ├── login.html
+        └── signup.html
+    
 
 **routes.py**
 
 Contains the applications main code.
+
+**models.py**
+
+Contains the `User` model class that represents the `users` table in the DB. Also contains the `Place` model that represents location data downloaded from external sources.
+
+**forms.py**
+
+Contains the Signup, Login and Address form backend implementation.
+
+**requirements.txt**
+
+Generated using `pip freeze` command. Contains the list of python packages that are required to be pre-installed for the application to execute without errors.
+
+This file is also required for a successful heroku deployment.
+
+**Procfile**
+
+Contains a list of commands that inform heroku what to execute when the application is deployed so as to start the application.
 
 **static**
 
