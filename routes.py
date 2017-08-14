@@ -13,8 +13,14 @@ app = Flask(__name__)
 # we do not use the SQLAlchemy event system
 # turning it off saves some resources
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/locationbasedservice'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+
+# Database configuration
+DATABASE_URL = 'postgresql://localhost/locationbasedservice'
+if 'DATABASE_URL' in os.environ:
+    DATABASE_URL = os.environ['DATABASE_URL']
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db.init_app(app)
 
 # Prevent CSRF attack (form)

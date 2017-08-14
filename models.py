@@ -141,8 +141,8 @@ class Place(object):
 class Location(db.Model):
     __tablename__ = 'locations'
     lid = db.Column(db.Integer, primary_key=True)
-    lat = db.Column(db.Float(precision='3,6'))
-    lng = db.Column(db.Float(precision='3,6'))
+    lat = db.Column(db.NUMERIC(6,6))
+    lng = db.Column(db.NUMERIC(6,6))
     address = db.Column(db.String(254))
     computedaddress = db.Column(db.String(254))
     city = db.Column(db.String(100))
