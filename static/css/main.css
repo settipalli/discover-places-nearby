@@ -54,6 +54,9 @@ a {
 
 .section-device img {
     width: 600px;
+}
+
+.img-enhance {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 10px;
 }
@@ -211,9 +214,6 @@ header {
     font-size: 16px;
 }
 
-
-
-
 .section-tabs {
     float: left;
     width: 340px;
@@ -277,4 +277,8 @@ header {
 
 .leaflet-popup-content p {
     margin: 10px 0;
+}
+
+.verticalLine {
+  border-left: thin solid #ff0000;
 }

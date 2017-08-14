@@ -66,8 +66,14 @@
             </div>
 
             {{ form.submit(class="btn-primary") }}
+            &nbsp;Or&nbsp;
+            <a href="{{ url_for('login') }}" class="btn-secondary">Sign In</a>
         </form>
     </div>
+    <div class="section-device">
+        <img src="static/img/favicon.svg" alt="Map Logo">
+    </div>
+    <div class="clearfix"></div>
 </main>
 
 {% endblock %}

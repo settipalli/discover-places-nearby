@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug import generate_password_hash, check_password_hash
+from datetime import datetime
 
 import geocoder
 import urllib
@@ -57,7 +58,7 @@ class User(db.Model):
 # p = Place()
 # places = p.query("London Eye, Lambeth, London")
 # lat: 51.503324  lng: -0.119543
-class Place (object):
+class Place(object):
     def meters_to_walking_time(self, meters):
         # 80 meters is 1 minute walking time
         return int(meters / 80)
@@ -66,10 +67,22 @@ class Place (object):
         return urllib.parse.urljoin('http://en.wikipedia.org/wiki/', slug.replace(' ', '_'))
 
     def address_to_latlng(self, address):
-        g = geocoder.google(address)
-        return (g.lat, g.lng)
+        # check if the address exists in the 'locations' table
+        location = Location.query.filter(Location.address.like(address + "%")).first()
+        print("Location", location)
+        if location is not None:
+            # add repeated record
+            repeated_location = Repeated(location)
+            db.session.add(repeated_location)
+            db.session.commit()
+            return (location.lat, location.lng)
+        else:
+            g = geocoder.google(address)
+            self.save_location(g)
+            return (g.lat, g.lng)
 
     def query(self, address):
+        print("Query called once: ", address)
         lat, lng = self.address_to_latlng(address)
         print (lat, lng)
 
@@ -101,3 +114,70 @@ class Place (object):
             places.append(d)
 
         return places
+
+
+    def save_location(self, geocoder):
+        # add location
+        g = geocoder
+        lat = g.lat
+        lng = g.lng
+        address = g.location
+        computedaddress = g.address.strip()
+        city = g.city
+        state = g.state
+        country = g.raw['country']['long_name']
+        countrycode = g.country
+        postalcode = g.postal
+        confidence = g.confidence
+        url = g.url.rsplit('&key')[0]
+
+        location = Location(lat, lng, address, computedaddress, city, state, country, countrycode, postalcode,
+                            confidence, url)
+        db.session.add(location)
+        db.session.commit()
+
+
+# location cache
+class Location(db.Model):
+    __tablename__ = 'locations'
+    lid = db.Column(db.Integer, primary_key=True)
+    lat = db.Column(db.Float(precision='3,6'))
+    lng = db.Column(db.Float(precision='3,6'))
+    address = db.Column(db.String(254))
+    computedaddress = db.Column(db.String(254))
+    city = db.Column(db.String(100))
+    state = db.Column(db.String(5))
+    country = db.Column(db.String(100))
+    countrycode = db.Column(db.String(5))
+    postalcode = db.Column(db.Integer)
+    confidence = db.Column(db.Integer)
+    url = db.Column(db.String(254))
+    
+    def __init__(self, lat, lng, address, computedaddress, city, state, country, countrycode, postalcode, confidence, url):
+        self.lat = lat
+        self.lng = lng
+        self.address = address.lower()
+        self.computedaddress = computedaddress
+        self.city = city.title()
+        self.state = state.upper()
+        self.country = country.title()
+        self.countrycode = countrycode.upper()
+        self.postalcode = postalcode
+        self.confidence = confidence
+        self.url = url
+
+
+# counter - repeated address queries
+class Repeated(db.Model):
+    __tablename__ = 'repeated'
+    cid = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime)
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.lid'))
+    location = db.relationship('Location', backref=db.backref('locations', lazy='dynamic'))
+
+    def __init__(self, location, timestamp = None):
+        if timestamp is None:
+            timestamp = datetime.utcnow()
+        self.timestamp = timestamp
+        self.location = location
+

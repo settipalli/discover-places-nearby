@@ -132,7 +132,7 @@ def init_db():
 
 
 if __name__ == "__main__":
-    if os.environ['MODE'].strip() == "production":
+    if "MODE" in os.environ and os.environ['MODE'].strip() == "production":
         app.run()
     else:
         app.run(debug=True) # development mode
