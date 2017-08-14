@@ -1,6 +1,6 @@
 # Will contain the applications main code.
 
-import sys
+import os
 
 from flask import Flask, render_template, request, session, redirect, url_for, abort
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user
@@ -10,6 +10,9 @@ from forms import SignupForm, LoginForm, AddressForm
 
 app = Flask(__name__)
 
+# we do not use the SQLAlchemy event system
+# turning it off saves some resources
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/locationbasedservice'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db.init_app(app)
@@ -119,14 +122,18 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-# Initialize the database
+# initialize the database
 def init_db():
     with app.app_context():
-        # Extensions like Flask-SQLAlchemy now know what the "current" app
-        # is while within this block. Therefore, you can now run:
+        # SQLAlchemy now knows what the "current" app is while within this block
+        # therefore, you can now run:
         db.create_all()
         print("Database created.")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if os.environ['MODE'].strip() == "production":
+        app.run()
+    else:
+        print("Starting the app with debug == True")
+        app.run(debug=True) # development mode

@@ -80,6 +80,8 @@ The application's HTML files are stored in this folder.
         web: gunicorn routes:app
     
 5. Create a heroku app: `heroku create <appname>`
-6. Push to heroku git repository: `git push heroku master`
-7. Set the `GOOGLE_API_KEY` environment variable to the API key generated for a project through `https://console.developers.google.com`.
-8. Verify the deployment: `heroku open`
+6. Generate an API key for the project through `https://console.developers.google.com`
+7. Save the API key as the `GOOGLE_API_KEY` config (environment) variable using the command: `heroku config:set GOOGLE_API_KEY=<key>`
+8. Set the value of the `MODE` config (environment) variable as 'production' (without quotes) using the command: `heroku config:set MODE=production` and verify that the config variables are set appropriately using the command: `heroku config`
+9. Push to heroku git repository: `git push heroku master`
+10. Verify the deployment: `heroku open`
