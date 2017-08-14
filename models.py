@@ -69,7 +69,6 @@ class Place(object):
     def address_to_latlng(self, address):
         # check if the address exists in the 'locations' table
         location = Location.query.filter(Location.address.like(address + "%")).first()
-        print("Location", location)
         if location is not None:
             # add repeated record
             repeated_location = Repeated(location)
@@ -84,7 +83,6 @@ class Place(object):
     def query(self, address):
         print("Query called once: ", address)
         lat, lng = self.address_to_latlng(address)
-        print (lat, lng)
 
         query_url = 'https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=5000&gscoord={0}%7C{1}&gslimit=20&format=json'.format(lat, lng)
         g = urllib.request.urlopen(query_url)
@@ -156,13 +154,13 @@ class Location(db.Model):
     def __init__(self, lat, lng, address, computedaddress, city, state, country, countrycode, postalcode, confidence, url):
         self.lat = lat
         self.lng = lng
-        self.address = address.lower()
-        self.computedaddress = computedaddress
-        self.city = city.title()
-        self.state = state.upper()
-        self.country = country.title()
-        self.countrycode = countrycode.upper()
-        self.postalcode = postalcode
+        self.address = address.lower() if address is not None else ""
+        self.computedaddress = computedaddress if computedaddress is not None else ""
+        self.city = city.title() if city is not None else ""
+        self.state = state.upper() if state is not None else ""
+        self.country = country.title() if country is not None else ""
+        self.countrycode = countrycode.upper() if countrycode is not None else ""
+        self.postalcode = postalcode if postalcode is not None else ""
         self.confidence = confidence
         self.url = url
 
