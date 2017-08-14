@@ -135,5 +135,4 @@ if __name__ == "__main__":
     if os.environ['MODE'].strip() == "production":
         app.run()
     else:
-        print("Starting the app with debug == True")
         app.run(debug=True) # development mode
