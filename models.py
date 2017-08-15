@@ -68,7 +68,7 @@ class Place(object):
 
     def address_to_latlng(self, address):
         # check if the address exists in the 'locations' table
-        location = Location.query.filter(Location.address.like(address + "%")).first()
+        location = Location.query.filter(Location.address.like(address.lower() + "%")).first()
         if location is not None:
             # add repeated record
             repeated_location = Repeated(location)
@@ -81,7 +81,6 @@ class Place(object):
             return (g.lat, g.lng)
 
     def query(self, address):
-        print("Query called once: ", address)
         lat, lng = self.address_to_latlng(address)
 
         query_url = 'https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=5000&gscoord={0}%7C{1}&gslimit=20&format=json'.format(lat, lng)
@@ -139,15 +138,15 @@ class Place(object):
 class Location(db.Model):
     __tablename__ = 'locations'
     lid = db.Column(db.Integer, primary_key=True)
-    lat = db.Column(db.NUMERIC(6,6))
-    lng = db.Column(db.NUMERIC(6,6))
+    lat = db.Column(db.Float)
+    lng = db.Column(db.Float)
     address = db.Column(db.String(254))
     computedaddress = db.Column(db.String(254))
     city = db.Column(db.String(100))
-    state = db.Column(db.String(5))
+    state = db.Column(db.String(100))
     country = db.Column(db.String(100))
     countrycode = db.Column(db.String(5))
-    postalcode = db.Column(db.Integer)
+    postalcode = db.Column(db.String(20))
     confidence = db.Column(db.Integer)
     url = db.Column(db.String(254))
     
