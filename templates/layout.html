@@ -32,7 +32,16 @@
 <body>
 <header>
     <div class="container">
-        <h1 class="title"><a href="/">Discover Nearby Places</a></h1>
+            <h1 class="title"><a href="/">Discover Nearby Places</a></h1>
+            <div class="main-nav">
+            {% if current_user.is_authenticated %}
+                <ul>
+                    <li>
+                        <a href="{{ url_for('logout') }}">Sign Out</a>
+                    </li>
+                </ul>
+            {% endif %}
+            </div>
     </div>
 </header>
 
