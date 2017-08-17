@@ -6,12 +6,19 @@
     <div class="container">
         <div class="section-tabs">
             <div class="places">
-                {% for place in places %}
-                <article>
-                    <a href="{{ place['url'] }}" class="name" target=""_blank">{{ place['name'] }}</a>
-                    <p class="walking-distance">{{ place['time'] }} min away</p>
-                </article>
-                {% endfor %}
+                {% if not form.address.errors %}
+                    {% for place in places %}
+                    <article>
+                        <a href="{{ place['url'] }}" class="name" target=""_blank">{{ place['name'] }}</a>
+                        <p class="walking-distance">{{ place['time'] }} min away</p>
+                    </article>
+                    {% endfor %}
+                {% else %}
+                    <article>
+                        <a href="#" class="name" target=""_blank">No places found</a>
+                        <p class="walking-distance">Try again with a different address.</p>
+                    </article>
+                {% endif %}
             </div>
         </div>
 
@@ -53,7 +60,6 @@
             {% endfor %}
         ]
 
-        console.log(planes)
         var map = L.map('map', {attributionControl: false}).setView([{{ my_coordinates[0] }}, {{ my_coordinates[1] }}], 15);
         L.control.attribution({prefix: ''}).addTo(map);
         mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';

@@ -77,8 +77,11 @@ class Place(object):
             return (location.lat, location.lng)
         else:
             g = geocoder.google(address)
-            self.save_location(g)
-            return (g.lat, g.lng)
+            if g.ok:
+                self.save_location(g)
+                return (g.lat, g.lng)
+            else:
+                return (None, None)
 
     def query(self, address):
         lat, lng = self.address_to_latlng(address)
